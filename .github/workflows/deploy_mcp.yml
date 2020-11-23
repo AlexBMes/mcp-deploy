@@ -65,9 +65,9 @@ jobs:
             echo "  bucket = \"${{secrets.GCP_PROJECT}}-bucket\""
             echo "  prefix = "tf-state-files"
             echo "}"
-            echo "module \"GCS\"{"
+            echo "module gcs{"
             echo "  source = \"../../../../../mcp\""
-            echo "}
+            echo "}"
           } > main.tf
           cat main.tf
           terraform init
