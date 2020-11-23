@@ -41,6 +41,7 @@ jobs:
           project_id: ${{secrets.GCP_PROJECT}}
           service_account_key: ${{secrets.GCP_SA_KEY}}
           export_default_credentils: true
+          credentials_file_path: .
 
       - name: Setup GCP
         run: |
