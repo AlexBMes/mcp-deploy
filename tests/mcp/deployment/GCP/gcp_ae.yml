@@ -1,5 +1,5 @@
 create_google_project: false
-location_id: "europe_west"
+location_id: "europe_west2"
 components:
   common:
     entrypoint: python main.py
