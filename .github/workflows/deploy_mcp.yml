@@ -64,9 +64,9 @@ jobs:
           gcloud container clusters create mcpdeploytest-cluster --num-nodes=1
           gcloud container clusters get-credentials mcpdeploytest-cluster
 
-
       - name: deploy k8s
         run: |
           cd ${env.working-directory}/k8s/terraform
           echo $PWD
+          
       #TODO: Deploy AWS
