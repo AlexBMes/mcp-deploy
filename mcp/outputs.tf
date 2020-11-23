@@ -13,10 +13,6 @@ output "gae_std" {
   value = local.as_std_specs
 }
 
-output "kubernetes" {
-  value = local.k8s
-}
-
 output "cloudrun" {
   value = local.cloudrun
 }
