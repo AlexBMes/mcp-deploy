@@ -43,7 +43,6 @@ jobs:
 
       - name: Setup GCP
         run: |
-#          gcloud config set protject ${GCP_PROJECT_ID}
           gcloud config set compute/zone europe-west2
           cd GCP/app/build/helloworld
           gcloud builds submit --tag gcr.io/${GCP_PROJECT_ID}/helloworld
