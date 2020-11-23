@@ -51,7 +51,7 @@ jobs:
           gcloud builds submit --tag gcr.io/${{env.GCP_PROJECT_ID}}/helloworld
           gsutil ls -b gs://${{env.GCP_PROJECT_ID}}-bucket || gsutil mb gs://${{env.GCP_PROJECT_ID}}-bucket
           cd ../../..
-          echo 'name: ${{env.GCP_PROJECT_ID}}-bucket' > project.yml
+          echo 'name: ${{env.GCP_PROJECT_ID}}-bucket-${GITHUB_SHA::8}' > project.yml
           echo 'project_id: ${{env.GCP_PROJECT_ID}}' | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
           echo 'image_uri: gcr.io/${{env.GCP_PROJECT_ID}}/helloworld' | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
           echo 'project_id: ${{env.GCP_PROJECT_ID}}' | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
