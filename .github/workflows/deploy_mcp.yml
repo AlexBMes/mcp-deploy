@@ -67,6 +67,7 @@ jobs:
             echo "}
           } > main.tf
           terraform init
+          terraform plan
 #          terraform apply -auto-approve
 
       - name: setup kubectl
@@ -77,8 +78,8 @@ jobs:
 
       - name: deploy k8s
         run: |
-          cd ${env.working-directory}/k8s/terraform
-          echo $PWD
+          cd k8s/terraform
+          ls
 
       - name: error cleanup
         if: ${{ failure() }}
