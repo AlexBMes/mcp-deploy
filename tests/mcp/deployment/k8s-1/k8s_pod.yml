@@ -1,0 +1,11 @@
+metadata:
+  name: "nginx-example"
+  namespace:
+  labels:
+    app: "nginx"
+spec:
+  container:
+    - name: "nginx-example"
+      image: "nginx:1.7.8"
+      port:
+        - container_port: 80
