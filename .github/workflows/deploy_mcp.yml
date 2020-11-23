@@ -57,7 +57,7 @@ jobs:
       - name: Deploy GCP modules
         run: |
           cd GCP/terraform
-          terraform init
+          terraform init -reconfigure
           terraform plan
 #          terraform apply -auto-approve
 
