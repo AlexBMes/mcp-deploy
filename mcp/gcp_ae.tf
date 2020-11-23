@@ -169,7 +169,7 @@ resource "google_app_engine_flexible_app_version" "self" {
 
         content {
           name = files.key
-          source_url = "https://storage.googleapis.com/${google_storage_bucket.self[0]name}/${files.value}"
+          source_url = "https://storage.googleapis.com/${google_storage_bucket.self[0].name}/${files.value}"
           sha1_sum = files.value
         }
       }
@@ -389,7 +389,7 @@ resource "google_app_engine_standard_app_version" "self" {
 
         content {
           name = files.key
-          source_url = "https://storage.googleapis.com/${google_storage_bucket.self[0]name}/${files.value}"
+          source_url = "https://storage.googleapis.com/${google_storage_bucket.self[0].name}/${files.value}"
           sha1_sum = files.value
         }
       }
