@@ -63,7 +63,7 @@ jobs:
           {
             echo "terraform {"
             echo "  bucket = \"${{secrets.GCP_PROJECT}}-bucket\""
-            echo "  prefix = \"tf-state-files\"
+            echo "  prefix = \"tf-state-files\""
             echo "}"
             echo "module gcs {"
             echo "  source = \"../../../../../mcp\""
