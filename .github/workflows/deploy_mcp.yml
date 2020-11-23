@@ -51,9 +51,9 @@ jobs:
           gsutil ls -b gs://${{secrets.GCP_PROJECT}}-bucket || gsutil mb gs://${{secrets.GCP_PROJECT}}-bucket
           cd ../../..
           echo 'name: ${{secrets.GCP_PROJECT}}-bucket' > project.yml
-          echo 'project_id: $GCP_PROJECT_ID' | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
-          echo 'image_uri: gcr.io/${GCP_PROJECT_ID}/helloworld' | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
-          echo 'project_id: $GCP_PROJECT_ID' | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
+          echo 'project_id: ${{secrets.GCP_PROJECT}}' | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
+          echo 'image_uri: gcr.io/${{secrets.GCP_PROJECT}}/helloworld' | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
+          echo 'project_id: ${{secrets.GCP_PROJECT}}' | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
 
       - name: Deploy GCP modules
         run: |
