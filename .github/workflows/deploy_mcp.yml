@@ -9,10 +9,10 @@ jobs:
   unit-tests:
     name: 'Unit Tests'
     runs-on: ubuntu-latest
-    if: contains(github.head_ref, 'mcp') && (startswith(github.head_ref, 'feat/') || startswith(github.head_ref, 'bug/') || startswith(github.head_ref, 'patch/'))
+#    if: contains(github.head_ref, 'mcp') && (startswith(github.head_ref, 'feat/') || startswith(github.head_ref, 'bug/') || startswith(github.head_ref, 'patch/'))
     env:
       working-directory: ./tests/mcp/deployment
-      GCP_PROJECT_ID: "mcpdeploytest-${GITHUB_SHA::8}"
+      GCP_PROJECT_ID: ${{secrets.GCP_PROJECT}}
 #      GCP_PROJECT_ID: "mcpdeploytest-$(date '+%d%m%Y-%H%M')"
 
     defaults:
@@ -43,7 +43,6 @@ jobs:
 
       - name: Setup GCP
         run: |
-          gcloud projects create $GCP_PROJECT_ID
           gcloud config set compute/zone europe-west2
           cd GCP/app/build/helloworld
           gcloud builds submit --tag gcr.io/${GCP_PROJECT_ID}/helloworld
@@ -57,14 +56,7 @@ jobs:
           cd ${env.working-directory}/gcp/terraform
           terraform init
           terraform plan
-          terraform apply -auto-approve
-
-      - name: Deploy infrastructure
-        run: |
-          cd ${env.working-directory}/gcp/terraform
-          terraform init
-          terraform plan
-          terraform apply -auto-approve
+#          terraform apply -auto-approve
 
       - name: setup kubectl
         run: |
