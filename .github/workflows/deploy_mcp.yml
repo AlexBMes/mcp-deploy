@@ -62,10 +62,12 @@ jobs:
           touch main.tf
           {
             echo "terraform {"
-            echo "  bucket = \"${{secrets.GCP_PROJECT}}-bucket\""
-            echo "  prefix = \"tf-state-files\""
+            echo "  backend \"gcs\"{"
+            echo "    bucket = \"${{secrets.GCP_PROJECT}}-bucket\""
+            echo "    prefix = \"tf-state-files\""
+            echo "  }"
             echo "}"
-            echo "module gcs {"
+            echo "module gcp {"
             echo "  source = \"../../../../../mcp\""
             echo "}"
           } > main.tf
