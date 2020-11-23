@@ -58,17 +58,18 @@ jobs:
         run: |
           cd GCP
           mkdir terraform
-          touch terraform/main.tf
+          cd terraform
+          touch main.tf
           {
             echo "terraform{"
-            echo "  bucket = ${{secrets.GCP_PROJECT}}-bucket"
+            echo "  bucket = \"${{secrets.GCP_PROJECT}}-bucket\""
             echo "  prefix = "tf-state-files"
             echo "}"
             echo "module \"GCS\"{"
             echo "  source = \"../../../../../mcp\""
             echo "}
-          } > terraform/main.tf
-          cd terraform
+          } > main.tf
+          cat main.tf
           terraform init
           terraform plan
 #          terraform apply -auto-approve
