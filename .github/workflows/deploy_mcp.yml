@@ -57,6 +57,7 @@ jobs:
       - name: Deploy GCP modules
         run: |
           cd GCP
+          touch terraform/main.tf
           {
             echo "terraform{"
             echo "  bucket = ${{secrets.GCP_PROJECT}}-bucket"
