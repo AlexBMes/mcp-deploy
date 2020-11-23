@@ -56,7 +56,7 @@ jobs:
 
       - name: Deploy GCP modules
         run: |
-          cd GCP/terraform
+          cd GCP
           {
             echo "terraform{"
             echo "  bucket = ${{secrets.GCP_PROJECT}}-bucket"
@@ -65,7 +65,8 @@ jobs:
             echo "module \"GCS\"{"
             echo "  source = \"../../../../../mcp\""
             echo "}
-          } > main.tf
+          } > terraform/main.tf
+          cd terraform
           terraform init
           terraform plan
 #          terraform apply -auto-approve
