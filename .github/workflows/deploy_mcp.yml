@@ -45,6 +45,7 @@ jobs:
         run: |
           gcloud config set compute/zone europe-west2
           cd GCP/app/build/helloworld
+          gcloud services enable cloudbuild.googleapis.com
           gcloud builds submit --tag gcr.io/${GCP_PROJECT_ID}/helloworld
           cd ${working-directory}/GCP
           echo 'project_id: $GCP_PROJECT_ID' | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
@@ -68,5 +69,5 @@ jobs:
         run: |
           cd ${env.working-directory}/k8s/terraform
           echo $PWD
-          
+
       #TODO: Deploy AWS
