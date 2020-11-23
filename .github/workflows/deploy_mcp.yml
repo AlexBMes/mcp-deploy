@@ -57,6 +57,7 @@ jobs:
       - name: Deploy GCP modules
         run: |
           cd GCP
+          mkdir terraform
           touch terraform/main.tf
           {
             echo "terraform{"
