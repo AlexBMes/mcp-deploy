@@ -47,7 +47,7 @@ jobs:
           cd GCP/app/build/helloworld
           gcloud services enable cloudbuild.googleapis.com
           gcloud builds submit --tag gcr.io/${{secrets.GCP_PROJECT}}/helloworld
-          gsutil ls -b gs://${{secrets.GCP_PROJECT}}-bucket || gsutil mb -l ASIA gs://${{secrets.GCP_PROJECT}}-bucket
+          gsutil ls -b gs://${{secrets.GCP_PROJECT}}-bucket || gsutil mb gs://${{secrets.GCP_PROJECT}}-bucket
           cd ../../..
           echo 'name: ${{secrets.GCP_PROJECT}}-bucket' > project.yml
           echo 'project_id: $GCP_PROJECT_ID' | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
@@ -57,8 +57,7 @@ jobs:
       - name: Deploy GCP modules
         run: |
           cd GCP/terraform
-          terraform init -reconfigure
-          terraform plan
+          terraform init 
 #          terraform apply -auto-approve
 
       - name: setup kubectl
