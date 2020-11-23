@@ -1,7 +1,6 @@
 terraform {
   backend "gcs" {
     bucket = "mcp-deployment-action-test"
-    prefix = "terraform"
   }
 }
 
