@@ -46,7 +46,7 @@ jobs:
           gcloud config set compute/zone europe-west2
           cd GCP/app/build/helloworld
           gcloud services enable cloudbuild.googleapis.com
-          gcloud builds submit --tag gcr.io/${GCP_PROJECT_ID}/helloworld
+          gcloud builds submit --tag gcr.io/${{secrets.GCP_PROJECT}}/helloworld
           cd ${working-directory}/GCP
           echo 'project_id: $GCP_PROJECT_ID' | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
           echo 'image_uri: gcr.io/${GCP_PROJECT_ID}/helloworld' | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
