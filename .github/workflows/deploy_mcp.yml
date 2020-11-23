@@ -61,11 +61,11 @@ jobs:
           cd terraform
           touch main.tf
           {
-            echo "terraform{"
+            echo "terraform {"
             echo "  bucket = \"${{secrets.GCP_PROJECT}}-bucket\""
-            echo "  prefix = "tf-state-files"
+            echo "  prefix = \"tf-state-files\"
             echo "}"
-            echo "module gcs{"
+            echo "module gcs {"
             echo "  source = \"../../../../../mcp\""
             echo "}"
           } > main.tf
