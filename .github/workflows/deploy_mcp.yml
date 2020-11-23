@@ -107,8 +107,8 @@ jobs:
           terraform init
           terraform refresh
           terraform plan -out="./plan.tfplan"
-          terraform apply plan.tfplan
-          ls
+#          terraform apply plan.tfplan
+
 
       - name: error cleanup
         if: ${{ failure() }}
