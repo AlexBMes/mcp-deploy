@@ -46,6 +46,7 @@ jobs:
           gcloud config set compute/zone europe-west2
           cd GCP/app/build/helloworld
           gcloud services enable cloudbuild.googleapis.com
+          gcloud services enable cloudresourcemanager.googleapis.com
           gcloud builds submit --tag gcr.io/${{secrets.GCP_PROJECT}}/helloworld
           gsutil ls -b gs://${{secrets.GCP_PROJECT}}-bucket || gsutil mb gs://${{secrets.GCP_PROJECT}}-bucket
           cd ../../..
