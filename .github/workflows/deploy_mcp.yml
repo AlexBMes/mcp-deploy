@@ -13,7 +13,6 @@ jobs:
     env:
       working-directory: ./tests/mcp/deployment
       GCP_PROJECT_ID: ${{secrets.GCP_PROJECT}}
-      GOOGLE_APPLICATION_CREDENTIALS: ${{secrets.GCP_SA_KEY}}
 #      GCP_PROJECT_ID: "mcpdeploytest-$(date '+%d%m%Y-%H%M')"
 
     defaults:
@@ -41,6 +40,7 @@ jobs:
         with:
           project_id: ${{secrets.GCP_PROJECT}}
           service_account_key: ${{secrets.GCP_SA_KEY}}
+          export_default_credentils: true
 
       - name: Setup GCP
         run: |
