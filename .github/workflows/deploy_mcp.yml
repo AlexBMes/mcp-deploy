@@ -74,6 +74,7 @@ jobs:
 
 
       - name: deploy k8s
-        run:
-
+        run: |
+          cd ${env.working-directory}/k8s/terraform
+          echo $PWD
       #TODO: Deploy AWS
