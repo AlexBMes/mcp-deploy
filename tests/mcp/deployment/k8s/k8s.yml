@@ -62,11 +62,11 @@ components:
         data:
           'test': 'test'
         data_file:
-          - ./resources/mosquitto.conf
+          - ../resources/mosquitto.conf
         binary_data:
           bar: L3Jvb3QvMTAw
         binary_file:
-          - ./resources/binary.bin
+          - ../resources/binary.bin
       secret:
         metadata:
           annotations:
@@ -81,7 +81,7 @@ components:
           login: login
           password: password
         data_file:
-          - ./resources/secret.file
+          - ../resources/secret.file
       service:
         metadata:
           name: "mosquitto"
