@@ -101,7 +101,7 @@ components:
               target_port: 8080
           type: LoadBalancer
     app_2:
-      k8s_pod_autoscaler:
+      pod_autoscaler:
         metadata:
           name: test
         spec:
@@ -169,6 +169,126 @@ components:
           - name: "pod-app-secret-file"
         automount_service_account_token:
           true
+    app_3:
+      ingress:
+        wait_for_load_balancer: true
+        metadata:
+          name: "example-ingress"
+        spec:
+          backend:
+            service_name: "service"
+            service_port: 8080
+          rule:
+            host:
+            http:
+              paths:
+                - path: "/"
+                  backend:
+                    service_port: 8080
+                    service_name: "service"
+                - path: "/"
+                  backend:
+                    service_port: 8080
+                    service_name: "service2"
+          tls:
+          secret_name: "tls-secret"
+      stateful_set:
+        metadata:
+          name: "test-stateful-set"
+          labels:
+            app: "test"
+        spec:
+          metadata:
+            name: web
+          spec:
+            selector:
+              match_labels:
+                app: nginx # has to match .spec.template.metadata.labels
+            service_name: "nginx"
+            replicas: 1 # by default is 1
+            template:
+              metadata:
+                labels:
+                  app: nginx # has to match .spec.selector.matchLabels
+              spec:
+                termination_grace_period_seconds: 10
+                container:
+                  - name: nginx
+                    image: k8s.gcr.io/nginx-slim:0.8
+                    port:
+                      - container_port: 80
+                        name: web
+                    volume_mount:
+                      - name: www-data
+                        mount_path: /usr/share/nginx/html
+            volume_claim_template:
+              metadata:
+                name: www-data
+              spec:
+                access_modes:
+                  - ReadWriteOnce
+                storage_class_name: "standard"
+                resources:
+                  requests:
+                    storage: 1Gi
+    app_4:
+      persistent_volume:
+        metadata:
+          name: perisistent-volume
+        spec:
+          capacity:
+            "storage": "10Gi"
+          access_modes:
+            - "ReadWriteOnce"
+          persistent_volume_source:
+            gce_persistent_disk:
+              pd_name: "mcpdeploytest-pd"
+      k8s_persistent_volume_claim:
+        metadata:
+          name: perisistent-volume-claim
+        spec:
+          access_modes:
+            - "ReadWriteOnce"
+          resources:
+            requests:
+              storage: "5Gi"
+          volume_name: "persistent-volume"
+      pod:
+        metadata:
+          name: "nginx-example"
+          namespace:
+          labels:
+            app: "nginx"
+        spec:
+          container:
+            - name: "nginx-example"
+              image: "nginx:1.7.8"
+              port:
+                - container_port: 80
+      cron_job:
+        metadata:
+          name: demo
+        spec:
+          concurrency_policy: Replace
+          failed_jobs_history_limit: 5
+          schedule: "1 0 * * *"
+          starting_deadline_seconds: 10
+          successful_jobs_history_limit: 10
+          job_template:
+            spec:
+              backoff_limit: 2
+              ttl_seconds_after_finished: 10
+              template:
+                spec:
+                  container:
+                    - name: hello
+                      image: busybox
+                      command:
+                        - "/bin/sh"
+                        - "-c"
+                        - "date; echo Hello from Kubernetes cluster"
+
+
     default:
       manual_scaling:
         instances: 1
