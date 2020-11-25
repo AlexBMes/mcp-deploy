@@ -127,10 +127,10 @@ jobs:
             cd GCP/terraform
             terraform destroy -auto-approve
           fi
-          if [ -d "GCP/terraform" ]; then
+          if [ -d "k8s/terraform" ]; then
             cd ${{env.working_directory}}
             cd k8s/terraform
-            terraform detsroy -auto-apptove
+            terraform detsroy -auto-approve
           fi
 
 
