@@ -171,7 +171,6 @@ components:
           true
     app_3:
       ingress:
-        wait_for_load_balancer: true
         metadata:
           name: "example-ingress"
         spec:
@@ -186,12 +185,6 @@ components:
                   backend:
                     service_port: 8080
                     service_name: "service"
-                - path: "/"
-                  backend:
-                    service_port: 8080
-                    service_name: "service2"
-          tls:
-          secret_name: "tls-secret"
       stateful_set:
         metadata:
           name: web
