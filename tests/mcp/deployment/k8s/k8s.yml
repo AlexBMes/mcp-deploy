@@ -202,8 +202,8 @@ components:
           access_modes:
             - "ReadWriteMany"
           persistent_volume_source:
-            gce_persistent_disk:
-              pd_name: "pd-mcp-test"
+            local:
+              path: "./"
       k8s_persistent_volume_claim:
         metadata:
           name: perisistent-volume-claim
