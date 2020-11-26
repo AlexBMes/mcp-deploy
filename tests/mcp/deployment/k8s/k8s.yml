@@ -195,25 +195,25 @@ components:
     app_4:
       persistent_volume:
         metadata:
-          name: test
+          name: pv-test
         spec:
           capacity:
-            "storage": "10Gi"
+            "storage": "2Gi"
           access_modes:
-            - "ReadWriteOnce"
+            - "ReadWriteMany"
           persistent_volume_source:
-            hostPath:
-              path: "/mnt/data"
+            gce_persistent_disk:
+              pd_name: "pd-mcp-test"
       k8s_persistent_volume_claim:
         metadata:
           name: perisistent-volume-claim
         spec:
           access_modes:
-            - "ReadWriteOnce"
+            - "ReadWriteMany"
           resources:
             requests:
-              storage: "5Gi"
-          volume_name: "persistent-volume"
+              storage: "2Gi"
+          volume_name: "pv-test"
       pod:
         metadata:
           name: "nginx-example-2"
