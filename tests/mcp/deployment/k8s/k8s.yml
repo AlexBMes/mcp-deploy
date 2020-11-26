@@ -202,8 +202,8 @@ components:
           access_modes:
             - "ReadWriteOnce"
           persistent_volume_source:
-            gce_persistent_disk:
-              pd_name: "mcpdeploytest-pd"
+            hostPath:
+              path: "/mnt/data"
       k8s_persistent_volume_claim:
         metadata:
           name: perisistent-volume-claim
