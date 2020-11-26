@@ -193,17 +193,17 @@ components:
                     period_seconds: 3
 
     app_4:
-      persistent_volume:
-        metadata:
-          name: pv-test
-        spec:
-          capacity:
-            "storage": "2Gi"
-          access_modes:
-            - "ReadWriteMany"
-          persistent_volume_source:
-            local:
-              path: "./"
+#      persistent_volume:
+#        metadata:
+#          name: pv-test
+#        spec:
+#          capacity:
+#            "storage": "2Gi"
+#          access_modes:
+#            - "ReadWriteMany"
+#          persistent_volume_source:
+#            local:
+#              path: "./"
       k8s_persistent_volume_claim:
         metadata:
           name: perisistent-volume-claim
