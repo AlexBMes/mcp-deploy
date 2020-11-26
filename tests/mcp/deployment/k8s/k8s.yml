@@ -274,7 +274,6 @@ components:
                         - "-c"
                         - "date; echo Hello from Kubernetes cluster"
 
-
     default:
       manual_scaling:
         instances: 1
