@@ -187,38 +187,35 @@ components:
                     service_name: "service"
       stateful_set:
         metadata:
-          name: web
+          name: "test-stateful-set"
+          labels:
+            app: "test"
         spec:
           selector:
             match_labels:
-              app: nginx # has to match .spec.template.metadata.labels
-          service_name: "nginx"
-          replicas: 1 # by default is 1
+              app: "test"
           template:
             metadata:
+              name: "test-stateful-set"
               labels:
-                app: nginx # has to match .spec.selector.matchLabels
+                app: "test"
             spec:
-              termination_grace_period_seconds: 10
+              env:
+                name: "test-stateful-set"
+                value: test
               container:
-                - name: nginx
-                  image: k8s.gcr.io/nginx-slim:0.8
+                - name: "test-stateful-set"
+                  image: "nginx:1.7.8"
                   port:
-                    - container_port: 80
-                      name: web
-                  volume_mount:
-                    - name: www-data
-                      mount_path: /usr/share/nginx/html
-          volume_claim_template:
-            metadata:
-              name: www-data
-            spec:
-              access_modes:
-                - ReadWriteOnce
-              storage_class_name: "standard"
-              resources:
-                requests:
-                  storage: 1Gi
+                    - container_port: 8080
+                  liveness_probe:
+                    http_get:
+                      port: 80
+                      http_header:
+                        name: X-Custom-Header
+                        value: Awesome
+                    initial_delay_seconds: 3
+                    period_seconds: 3
 
     app_4:
       persistent_volume:
@@ -244,13 +241,13 @@ components:
           volume_name: "persistent-volume"
       pod:
         metadata:
-          name: "nginx-example"
+          name: "nginx-example-2"
           namespace:
           labels:
             app: "nginx"
         spec:
           container:
-            - name: "nginx-example"
+            - name: "nginx-example-2"
               image: "nginx:1.7.8"
               port:
                 - container_port: 80
