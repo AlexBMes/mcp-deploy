@@ -1,29 +1,35 @@
 
 //noinspection HILUnresolvedReference
 data "google_project" "default" {
-  count      = lookup(local.cloudrun, "create_google_project", false) ? 0 : 1
+  count      = local.cloudrun == {} || lookup(local.cloudrun, "create_google_project", false) ? 0 : 1
   project_id = lookup(local.cloudrun, "project_id", "")
 }
 
 resource "google_project_service" "iam" {
+  count   = local.cloudrun == {} ? 0 : 1
   project = lookup(local.cloudrun, "create_google_project", false) ? google_project.default[0].project_id: data.google_project.default[0].project_id
   service = "iam.googleapis.com"
+  disable_on_destroy = false
 }
 
 resource "google_project_service" "artifact_reg" {
+  count = lookup(local.cloudrun, "create_artifact_registry", false) ? 1 : 0
   project = lookup(local.cloudrun, "create_google_project", false) ? google_project.default[0].project_id: data.google_project.default[0].project_id
   service = "artifactregistry.googleapis.com"
+  disable_dependent_services = true
 }
 resource "google_project_service" "cloudrun" {
+  count   = local.cloudrun == {} ? 0 : 1
   project = lookup(local.cloudrun, "create_google_project", false) ? google_project.default[0].project_id: data.google_project.default[0].project_id
   service = "run.googleapis.com"
+  disable_dependent_services = true
 }
 
 //noinspection HILUnresolvedReference
 resource "google_project" "default" {
-  count           = lookup(local.cloudrun, "create_google_project", false) ? 1 : 0
+  count           = local.cloudrun != {} && lookup(local.cloudrun, "create_google_project", false) ? 1 : 0
   name            = lookup(local.cloudrun, "project_name", local.cloudrun.project_id)
-  project_id      = lookup(local.cloudrun,"project_id", null)
+  project_id      = lookup(local.cloudrun, "project_id", local.cloudrun.project_id)
   org_id          = lookup(local.cloudrun, "organization_name", null)
   folder_id       = lookup(local.cloudrun, "folder_id", null) == null ? null : local.gae.folder_id
   labels          = merge(lookup(local.project, "labels", {}), lookup(local.gae, "project_labels", {}))
@@ -34,7 +40,7 @@ resource "google_project" "default" {
 resource "google_artifact_registry_repository" "self" {
   count         = lookup(local.cloudrun, "create_artifact_registry", false) ? 1 : 0
   provider      = google-beta
-  project       = google_project_service.artifact_reg.project
+  project       = google_project_service.artifact_reg[0].project
   location      = local.cloudrun.location_id
   format        = "DOCKER"
   repository_id = lookup(local.cloudrun, "repository_id", "cloudrun-repo")
@@ -45,7 +51,7 @@ resource "google_cloud_run_service" "self" {
   for_each = local.cloudrun_specs
   location = local.cloudrun.location_id
   name     = each.value.name
-  project  = google_project_service.cloudrun.project
+  project  = google_project_service.cloudrun[0].project
   template {
     spec{
       //noinspection HILUnresolvedReference
@@ -80,6 +86,7 @@ resource "google_cloud_run_service" "self" {
 }
 
 data "google_iam_policy" "noauth" {
+  for_each = local.cloudrun_specs
   binding {
     role    = "roles/run.invoker"
     members = ["allUsers"]
@@ -108,7 +115,7 @@ resource "google_cloud_run_service_iam_policy" "self" {
   project     = google_cloud_run_service.self[each.key].project
   service     = google_cloud_run_service.self[each.key].name
 
-  policy_data = each.value.auth ? data.google_iam_policy.auth[each.key].policy_data : data.google_iam_policy.noauth.policy_data
+  policy_data = each.value.auth ? data.google_iam_policy.auth[each.key].policy_data : data.google_iam_policy.noauth[each.key].policy_data
 }
 
 //noinspection HILUnresolvedReference
