@@ -1,12 +1,13 @@
 name: 'Deployment Tests'
 
 on:
-#  push:
-#    branches:
-#      - master
+  push:
+    branches:
+      - master
   pull_request:
     branches:
       - master
+    types: [opened, synchonize, reopened, labeled ]
 
 jobs:
   unit-tests:
