@@ -12,7 +12,7 @@ jobs:
   unit-tests:
     name: 'Deployment tests'
     runs-on: ubuntu-latest
-        if: contains(github.head_ref, 'mcp') && ( ${github.event.label.name} == 'feature' || ${github.event.label.name} == 'bug' || ${github.event.label.name == 'patch'} )
+        if: contains(github.head_ref, 'mcp') && ( ${{github.event.label.name == 'feature'}} || ${{github.event.label.name == 'bug'}} || ${{github.event.label.name == 'patch'}} )
     env:
       working-directory: ./tests/mcp/deployment
       GCP_PROJECT_ID: ${{secrets.GCP_PROJECT}}
