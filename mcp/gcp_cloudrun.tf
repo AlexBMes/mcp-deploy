@@ -6,17 +6,23 @@ data "google_project" "default" {
 }
 
 resource "google_project_service" "iam" {
+  count   = local.cloudrun == {} ? 0 : 1
   project = lookup(local.cloudrun, "create_google_project", false) ? google_project.default[0].project_id: data.google_project.default[0].project_id
   service = "iam.googleapis.com"
+  disable_on_destroy = false
 }
 
 resource "google_project_service" "artifact_reg" {
+  count = lookup(local.cloudrun, "create_artifact_registry", false) ? 1 : 0
   project = lookup(local.cloudrun, "create_google_project", false) ? google_project.default[0].project_id: data.google_project.default[0].project_id
   service = "artifactregistry.googleapis.com"
+  disable_dependent_services = true
 }
 resource "google_project_service" "cloudrun" {
+  count   = local.cloudrun == {} ? 0 : 1
   project = lookup(local.cloudrun, "create_google_project", false) ? google_project.default[0].project_id: data.google_project.default[0].project_id
   service = "run.googleapis.com"
+  disable_dependent_services = true
 }
 
 //noinspection HILUnresolvedReference
