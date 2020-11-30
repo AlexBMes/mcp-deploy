@@ -4,20 +4,16 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
-    types: [opened, synchonize, reopened, labeled ]
-
+      -
 jobs:
   unit-tests:
     name: 'Deployment tests'
     runs-on: ubuntu-latest
-    if: contains(github.head_ref, 'mcp') && ( ${{github.event.label.name == 'feature'}} || ${{github.event.label.name == 'bug'}} || ${{github.event.label.name == 'patch'}} )
+    if: contains(github.head_ref, 'mcp') 
     env:
       working-directory: ./tests/mcp/deployment
-      GCP_PROJECT_ID: ${{secrets.GCP_PROJECT}}
-#      GCP_PROJECT_ID: "mcpdeploytest-$(date '+%d%m%Y-%H%M')"
+      GCP_PROJECT_ID: "testingmcpaction-${GITHUB_SHA::8}"
+    #      GCP_PROJECT_ID: ${{secrets.GCP_PROJECT}}
 
     defaults:
       run:
@@ -42,13 +38,13 @@ jobs:
       - name: Setup Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
-          project_id: ${{env.GCP_PROJECT_ID}}
           service_account_key: ${{secrets.GCP_SA_KEY}}
           export_default_credentials: true
 
       - name: Setup GCP
         run: |
-          echo ${GITHUB_SHA::8}
+          gcloud projects create ${{env.GCP_PROJECT_ID}} --folder=${{secrets.GCP_FOLDER_ID}}
+          gcloud config set project ${{env.GCP_PROIJECT_ID}}
           gcloud config set compute/zone europe-west2
           cd GCP/app/build/helloworld
           gcloud services enable cloudbuild.googleapis.com
@@ -62,7 +58,7 @@ jobs:
           echo 'image_uri: gcr.io/${{env.GCP_PROJECT_ID}}/helloworld' | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
           echo 'project_id: ${{env.GCP_PROJECT_ID}}' | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
 
-      - name: Deploy and destroy GCP modules
+      - name: Deploy GCP modules
         run: |
           cd GCP
           mkdir terraform
@@ -127,21 +123,21 @@ jobs:
           terraform plan -destroy -out="./destroy.tfplan"
           terraform apply destroy.tfplan
 
-#      - name: delete project
-#        run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
+      - name: delete project
+        run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
 
       - name: error cleanup
         if: ${{ failure() }}
-        run: |
-          if [ -d "GCP/terraform" ]; then
-            cd GCP/terraform
-            terraform destroy -auto-approve
-          fi
-          if [ -d "k8s/terraform" ]; then
-            cd ${{env.working_directory}}
-            cd k8s/terraform
-            terraform detsroy -auto-approve
-          fi
+        run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
+#          if [ -d "GCP/terraform" ]; then
+#            cd GCP/terraform
+#            terraform destroy -auto-approve
+#          fi
+#          if [ -d "k8s/terraform" ]; then
+#            cd ${{env.working_directory}}
+#            cd k8s/terraform
+#            terraform detsroy -auto-approve
+#          fi
 
 
 
