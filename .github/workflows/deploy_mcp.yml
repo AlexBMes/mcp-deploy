@@ -43,8 +43,7 @@ jobs:
 
       - name: Setup GCP
         run: |
-          gcloud projects create ${{env.GCP_PROJECT_ID}} --folder=${{secrets.GCP_FOLDER_ID}}
-          gcloud config set project ${{env.GCP_PROIJECT_ID}}
+          gcloud projects create ${{env.GCP_PROJECT_ID}} --folder=${{secrets.GCP_FOLDER_ID}} --set-as-default
           gcloud config set compute/zone europe-west2
           cd GCP/app/build/helloworld
           gcloud services enable cloudbuild.googleapis.com
