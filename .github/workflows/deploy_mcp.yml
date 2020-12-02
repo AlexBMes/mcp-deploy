@@ -35,7 +35,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_wrapper: false
-          
+
       - name: Setup Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
@@ -45,6 +45,7 @@ jobs:
       - name: Setup GCP
         run: |
           gcloud projects create ${{env.GCP_PROJECT_ID}} --folder=${{secrets.GCP_FOLDER_ID}} --set-as-default
+          gcloud beta billing projects link ${{env.GCP_PROJECT_ID}} --billing-account=${{secrets.GCP_BILLING_ID}}
           gcloud config set compute/zone europe-west2
           cd GCP/app/build/helloworld
           gcloud services enable cloudbuild.googleapis.com
