@@ -54,7 +54,7 @@ jobs:
           gcloud services enable appengine.googleapis.com
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_bucket
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_cloudbuild
-          gcloud builds submit --tag gcr.io/${{env.GCP_PROJECT_ID}}/helloworld --region=europe-west2
+          gcloud builds submit --tag gcr.io/${{env.GCP_PROJECT_ID}}/helloworld
           cd ../../..
           echo 'name: ${{env.GCP_PROJECT_ID}}-bucket' > project.yml
           echo 'project_id: ${{env.GCP_PROJECT_ID}}' | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
