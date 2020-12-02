@@ -47,14 +47,14 @@ jobs:
           gcloud projects create ${{env.GCP_PROJECT_ID}} --folder=${{secrets.GCP_FOLDER_ID}} --set-as-default
           gcloud components install beta --quiet
           gcloud beta billing projects link ${{env.GCP_PROJECT_ID}} --billing-account=${{secrets.GCP_BILLING_ID}}
-          gcloud config set compute/zone europe-west2
-          cd GCP/app/build/helloworld
           gcloud services enable cloudbuild.googleapis.com
           gcloud services enable cloudresourcemanager.googleapis.com
           gcloud services enable appengine.googleapis.com
+          gcloud config set compute/zone europe-west2
+          cd GCP/app/build/helloworld
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_bucket
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_cloudbuild
-          gcloud builds submit --tag gcr.io/${{env.GCP_PROJECT_ID}}/helloworld
+          gcloud builds submit --tag gcr.io/${{env.GCP_PROJECT_ID}}/helloworld --quiet
           cd ../../..
           echo 'name: ${{env.GCP_PROJECT_ID}}-bucket' > project.yml
           echo 'project_id: ${{env.GCP_PROJECT_ID}}' | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
