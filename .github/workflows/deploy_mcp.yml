@@ -47,10 +47,10 @@ jobs:
           gcloud projects create ${{env.GCP_PROJECT_ID}} --folder=${{secrets.GCP_FOLDER_ID}} --set-as-default
           gcloud components install beta --quiet
           gcloud beta billing projects link ${{env.GCP_PROJECT_ID}} --billing-account=${{secrets.GCP_BILLING_ID}}
-          gcloud services enable cloudbuild.googleapis.com
           gcloud services enable cloudresourcemanager.googleapis.com
+          gcloud services enable cloudbuild.googleapis.com
           gcloud services enable appengine.googleapis.com
-          gcloud services list --available
+          gcloud services list 
           gcloud config set compute/zone europe-west2
           cd GCP/app/build/helloworld
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_bucket
