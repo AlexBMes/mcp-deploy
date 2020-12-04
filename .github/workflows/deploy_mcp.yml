@@ -53,7 +53,7 @@ jobs:
           gcloud services enable artifactregistry.googleapis.com
           gcloud config set compute/zone europe-west2
           gcloud iam service-accounts create ga-deploy --description="Deploy with github actions" --display-name="Service account deploys through github action"
-          gcloud iam service-accounts keys create ./sa-key.json --iam-account ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com"
+          gcloud iam service-accounts keys create ./sa-key.json --iam-account ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com
           gcloud projects add-iam-policy-binding ga-test-0212 --member="serviceAccount:ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com" --role="roles/owner"
           gcloud auth activate-service-account --key-file=sa-key.json
 
