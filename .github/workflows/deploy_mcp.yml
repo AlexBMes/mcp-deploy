@@ -59,14 +59,14 @@ jobs:
         run: |
           gcloud iam service-accounts create ga-deploy --description="Deploy with github actions" --display-name="Service account deploys through github action"
           gcloud iam service-accounts keys create ./sa-key.json --iam-account ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com
-          gcloud projects add-iam-policy-binding ga-test-0212 --member="serviceAccount:ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com" --role="roles/owner"
+          gcloud projects add-iam-policy-binding ${{env.GCP_PROJECT_ID}} --member="serviceAccount:ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com" --role="roles/owner"
           gcloud auth activate-service-account --key-file=sa-key.json
 
       - name: Build Image and Configure Files
         run: |
           cd GCP/app/build/helloworld
           gcloud artifacts repositories create app-repo --repository-format=docker --location=europe-west2 --description="Repository for storing app"
-          gcloud builds submit --tag europe-west2-docker.pkg.dev/ga-test-0212/app-repo/helloworld
+          gcloud builds submit --tag europe-west2-docker.pkg.dev/{env.GCP_PROJECT_ID}/app-repo/helloworld
           cd ../../..
           echo 'name: ${{env.GCP_PROJECT_ID}}_bucket' > project.yml
           echo 'project_id: ${{env.GCP_PROJECT_ID}}' | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
