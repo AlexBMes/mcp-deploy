@@ -7,4 +7,4 @@ components:
       metadata:
         annotations:
           "run.googleapis.com/client-name": "terraform"
-        auth: false
+      auth: false
