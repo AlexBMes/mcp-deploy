@@ -58,8 +58,9 @@ jobs:
       - name: Create New SA
         run: |
           gcloud iam service-accounts create ga-deploy --description="Deploy with github actions" --display-name="Service account deploys through github action"
-          gcloud iam service-accounts keys create ./sa-key.json --iam-account ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com
-          gcloud projects add-iam-policy-binding ${{env.GCP_PROJECT_ID}} --member="serviceAccount:ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com" --role="roles/owner"
+          gcloud iam service-accounts keys create ./sa-key.json --iam-account ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com --no-user-output-enabled
+          gcloud projects add-iam-policy-binding ${{env.GCP_PROJECT_ID}} --member="serviceAccount:ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com" --role="roles/owner" --no-user-output-enabled
+          gcloud projects add-iam-policy-binding ${{env.GCP_PROJECT_ID}} --member="serviceAccount:ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com" --role="roles/artifactregistry.admin" --no-user-output-enabled
           gcloud auth activate-service-account --key-file=sa-key.json
 
       - name: Build Image and Configure Files
@@ -94,8 +95,8 @@ jobs:
           terraform init
           terraform refresh
           terraform plan -out="./plan.tfplan"
-  #          terraform apply plan.tfplan
-  #          terraform plan -destroy -out="./destroy.tfplan"
+          terraform apply plan.tfplan
+          terraform plan -destroy -out="./destroy.tfplan"
   #          terraform apply destroy.tfplan
 
       - name: setup kubectl
