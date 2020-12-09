@@ -53,6 +53,7 @@ jobs:
           gcloud services enable artifactregistry.googleapis.com
           gcloud services enable run.googleapis.com
           gcloud config set compute/zone europe-west2
+          gcloud services operations wait operations/acf
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_bucket
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_cloudbuild
           cd GCP/app/build/helloworld
