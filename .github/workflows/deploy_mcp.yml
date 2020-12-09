@@ -66,14 +66,14 @@ jobs:
           gcloud projects add-iam-policy-binding ${{env.GCP_PROJECT_ID}} --member="serviceAccount:ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com" --role="roles/artifactregistry.admin" --no-user-output-enabled
           gcloud auth activate-service-account --key-file=sa-key.json
 
-      - name: Build Image and Configure Files
+      - name: Configure Files
         run: |
           cd GCP
           echo "name: ${{env.GCP_PROJECT_ID}}_bucket" > project.yml
           cat project.yml
           echo "project_id: ${{env.GCP_PROJECT_ID}}" | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
           cat gcp_ae.yml
-          echo "image_uri: &image_uri europe-west2-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/app-repo/hello-world:latest" | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
+          echo "image_uri: &image_uri europe-west2-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/app-repo/helloworld:latest" | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
           echo "project_id: ${{env.GCP_PROJECT_ID}}" | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
           cat gcp_cloudrun.yml
 
