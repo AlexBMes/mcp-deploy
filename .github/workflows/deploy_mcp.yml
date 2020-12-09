@@ -104,7 +104,6 @@ jobs:
 
       - name: setup kubectl
         run: |
-          CREATE=false
           gcloud components install kubectl
           gcloud services enable container.googleapis.com
           response=$(gcloud container clusters describe mcpdeploytest-cluster || echo "ClusterNotFound")
