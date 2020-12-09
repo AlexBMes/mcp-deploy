@@ -7,4 +7,8 @@ components:
       metadata:
         annotations:
           "run.googleapis.com/client-name": "terraform"
-      auth: false
+      auth: true
+      iam:
+        add_member:
+          role: 'viewer'
+          member: 'user:alex.bailey@mesoform.com'
