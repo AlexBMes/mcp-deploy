@@ -55,8 +55,6 @@ jobs:
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_bucket
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_cloudbuild
           cd GCP/app/build/helloworld
-          gcloud artifacts repositories create app-repo --repository-format=docker --location=europe-west2 --description="Repository for storing app"
-          gcloud builds submit --tag europe-west2-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/app-repo/helloworld
 
       - name: Create New SA
         run: |
@@ -65,6 +63,8 @@ jobs:
           gcloud projects add-iam-policy-binding ${{env.GCP_PROJECT_ID}} --member="serviceAccount:ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com" --role="roles/owner" --no-user-output-enabled
           gcloud projects add-iam-policy-binding ${{env.GCP_PROJECT_ID}} --member="serviceAccount:ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com" --role="roles/artifactregistry.admin" --no-user-output-enabled
           gcloud auth activate-service-account --key-file=sa-key.json
+          gcloud artifacts repositories create app-repo --repository-format=docker --location=europe-west2 --description="Repository for storing app"
+          gcloud builds submit --tag europe-west2-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/app-repo/helloworld
 
       - name: Configure Files
         run: |
