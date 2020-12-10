@@ -104,6 +104,7 @@ jobs:
 #          not destroying this because will cause issues with app engine
 
       - name: setup kubectl
+        if: ${{ failure() }}
         run: |
           gcloud components install kubectl
           gcloud services enable container.googleapis.com
