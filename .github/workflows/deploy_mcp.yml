@@ -150,7 +150,4 @@ jobs:
         if: ${{ failure() }}
         run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
 
-
-
-
       #TODO: Deploy AWS
