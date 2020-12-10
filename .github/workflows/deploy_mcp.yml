@@ -104,7 +104,6 @@ jobs:
 #          not destroying this because will cause issues with app engine
 
       - name: setup kubectl
-        if: ${{ failure() }}
         run: |
           gcloud components install kubectl
           gcloud services enable container.googleapis.com
@@ -146,18 +145,10 @@ jobs:
       - name: delete project
         run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
 
-      - name: error cleanup
-        if: ${{ failure() }}
-        run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
-#          if [ -d "GCP/terraform" ]; then
-#            cd GCP/terraform
-#            terraform destroy -auto-approve
-#          fi
-#          if [ -d "k8s/terraform" ]; then
-#            cd ${{env.working_directory}}
-#            cd k8s/terraform
-#            terraform detsroy -auto-approve
-#          fi
+#      - name: error cleanup
+#        if: ${{ failure() }}
+#        run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
+
 
 
 
