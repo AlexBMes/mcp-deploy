@@ -10,6 +10,6 @@ components:
   specs:
     default:
       name: *app_name
-      src_path: app/build/helloworld
+      src_path: app
       skip_files: DOCKERFILE
       root_dir: app
