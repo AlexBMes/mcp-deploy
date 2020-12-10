@@ -72,7 +72,8 @@ jobs:
           cd GCP
           echo "name: ${{env.GCP_PROJECT_ID}}_bucket" > project.yml
           cat project.yml
-          echo "project_id: ${{env.GCP_PROJECT_ID}}" | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
+          echo "project_id: &project_id ${{env.GCP_PROJECT_ID}}" | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
+          echo "app_name: &app_name ${{env.GCP_PROJECT_ID}}" | cat - gcp_ae.yml > temp && mv temp gcp_ae.yml
           cat gcp_ae.yml
           echo "image_uri: &image_uri europe-west2-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/app-repo/helloworld:latest" | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
           echo "project_id: ${{env.GCP_PROJECT_ID}}" | cat - gcp_cloudrun.yml > temp && mv temp gcp_cloudrun.yml
@@ -145,9 +146,9 @@ jobs:
       - name: delete project
         run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
 
-#      - name: error cleanup
-#        if: ${{ failure() }}
-#        run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
+      - name: error cleanup
+        if: ${{ failure() }}
+        run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
 
 
 

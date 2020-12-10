@@ -5,9 +5,11 @@ components:
     entrypoint: python main.py
     runtime: python38
     env: standard
+    env_variables:
+      GCP_PROJECT_ID: *project_id
   specs:
     default:
-      name: test-app
+      name: *app_name
       src_path: app/helloworld
       skip_files: DOCKERFILE
       root_dir: app
