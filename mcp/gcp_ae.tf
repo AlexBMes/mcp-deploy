@@ -37,9 +37,9 @@ resource "google_storage_bucket" "self" {
   name = local.project.name
   uniform_bucket_level_access = true
   default_event_based_hold = false
-  labels = lookup(local.project, "labels", null)
+  labels = lookup(local.project, "labels", {})
   # ToDo handle region better between app engine and cloud storage
-  location = "${local.gae.location_id}1"
+  location = local.gae.location_id
   requester_pays = false
   storage_class = "REGIONAL"
   versioning {
