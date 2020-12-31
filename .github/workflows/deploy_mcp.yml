@@ -86,7 +86,6 @@ jobs:
       - name: Deploy GCP modules
         run: |
           cd GCP
-          mkdir terraform
           cd terraform
           cat main.tf | sed -r "s/gcs-bucket-name/${{env.GCP_PROJECT_ID}}_bucket/" > temp && mv temp main.tf
           cat main.tf
