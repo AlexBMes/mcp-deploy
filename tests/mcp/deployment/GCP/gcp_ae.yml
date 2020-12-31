@@ -1,3 +1,4 @@
+project_id: &project_id <project_id>
 create_google_project: false
 location_id: "europe-west2"
 components:
@@ -5,11 +6,8 @@ components:
     entrypoint: python main.py
     runtime: python38
     env: standard
-    env_variables:
-      GCP_PROJECT_ID: *project_id
   specs:
     default:
-      name: *app_name
       src_path: app
       skip_files: DOCKERFILE
       root_dir: app

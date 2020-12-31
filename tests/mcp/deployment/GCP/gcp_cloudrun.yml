@@ -1,9 +1,10 @@
+project_id: &project_id <project_id>
 location_id: "europe-west2"
 components:
   specs:
     default:
       name: "default"
-      image_uri: *image_uri
+      image_uri: <image_uri>
       metadata:
         annotations:
           "run.googleapis.com/client-name": "terraform"
