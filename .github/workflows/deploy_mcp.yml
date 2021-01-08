@@ -10,7 +10,6 @@ jobs:
   deployment-tests:
     name: 'Deployment tests'
     runs-on: ubuntu-latest
-    if: contains("${GITHUB_HEAD_REF}", 'mcp')
 
     env:
       working-directory: ./tests/mcp/deployment
