@@ -12,9 +12,7 @@ jobs:
 
     env:
       working-directory: ./tests/mcp/deployment
-      DATE: "${echo `date '+%H%M'`}"
-      GCP_PROJECT_ID: "testingmcpaction-${GITHUB_SHA::8}-${DATE}"
-#      GCP_PROJECT_ID: "testingmcpaction-${GITHUB_SHA::8}-$(date '+%H%M')"
+      GCP_PROJECT_ID: "testingmcpaction-${GITHUB_SHA::8}-$(date '+%H%M')"
 
     defaults:
       run:
