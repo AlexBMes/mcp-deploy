@@ -90,7 +90,7 @@ jobs:
       - name: setup kubectl
         run: |
           gcloud components install kubectl
-          gcloud container clusters create mcpdeploytest-clust --num-nodes=1
+          gcloud container clusters create mcpdeploytest-clust
           gcloud container clusters get-credentials mcpdeploytest-clust
 
       # Setup main.tf, deploy and destroy k8s
