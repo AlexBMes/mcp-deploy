@@ -36,6 +36,14 @@ components:
                       mount_path: /mosquitto/secret
                     - name: mosquitto-config-file
                       mount_path: mosquitto/config
+              volume:
+                - name: mosquitto-config-file
+                  config_map:
+                    name: mosquitto-config-file
+                - name: mosquitto-secret-file
+                  secret:
+                    secret_name: mosquitto-secret-file
+
 
       config_map:
         metadata:

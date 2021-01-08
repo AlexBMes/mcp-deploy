@@ -10,6 +10,7 @@ jobs:
   deployment-tests:
     name: 'Deployment tests'
     runs-on: ubuntu-latest
+    if: contains("${GITHUB_HEAD_REF}", 'mcp')
 
     env:
       working-directory: ./tests/mcp/deployment
@@ -47,7 +48,7 @@ jobs:
       # Configure buckets to be used, constrained to europe-west2 to match organization policies.
       - name: Setup GCP
         run: |
-          echo "${GITHUB_REF}"
+          echo "${GITHUB_HEAD_REF}"
           gcloud projects create ${{env.GCP_PROJECT_ID}} --folder=${{secrets.GCP_FOLDER_ID}} --set-as-default
           gcloud components install beta --quiet
           gcloud beta billing projects link ${{env.GCP_PROJECT_ID}} --billing-account=${{secrets.GCP_BILLING_ID}}
