@@ -5,6 +5,7 @@ on:
     branches:
       - master
 
+# a comment
 jobs:
   deployment-tests:
     name: 'Deployment tests'
