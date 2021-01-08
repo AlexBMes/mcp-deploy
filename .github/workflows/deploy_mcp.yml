@@ -47,7 +47,7 @@ jobs:
       # Configure buckets to be used, constrained to europe-west2 to match organization policies.
       - name: Setup GCP
         run: |
-          echo ${github.ref}
+          echo "${github.ref}"
           gcloud projects create ${{env.GCP_PROJECT_ID}} --folder=${{secrets.GCP_FOLDER_ID}} --set-as-default
           gcloud components install beta --quiet
           gcloud beta billing projects link ${{env.GCP_PROJECT_ID}} --billing-account=${{secrets.GCP_BILLING_ID}}
