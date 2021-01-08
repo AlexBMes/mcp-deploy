@@ -12,7 +12,7 @@ jobs:
 
     env:
       working-directory: ./tests/mcp/deployment
-      GCP_PROJECT_ID: "testingmcpaction-${GITHUB_SHA::8}"
+      GCP_PROJECT_ID: "testingmcpaction-${GITHUB_SHA::8}-$(date '+%d-%H%M')"
     #      GCP_PROJECT_ID: ${{secrets.GCP_PROJECT}}
 
     defaults:
@@ -90,8 +90,8 @@ jobs:
       - name: setup kubectl
         run: |
           gcloud components install kubectl
-          gcloud container clusters create mcpdeploytest-cluster --num-nodes=1
-          gcloud container clusters get-credentials mcpdeploytest-cluster
+          gcloud container clusters create mcpdeploytest-clust --num-nodes=1
+          gcloud container clusters get-credentials mcpdeploytest-clust
 
       # Setup main.tf, deploy and destroy k8s
       - name: deploy k8s
