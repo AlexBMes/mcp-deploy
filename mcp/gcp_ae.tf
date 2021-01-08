@@ -360,6 +360,9 @@ resource "google_app_engine_flexible_app_version" "self" {
   # Terraform in-built properties
   noop_on_destroy = var.tf_noop_on_destroy
   delete_service_on_destroy = var.tf_delete_service_on_destroy
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 
@@ -443,16 +446,6 @@ resource "google_app_engine_standard_app_version" "self" {
     }
   }
 
-  //noinspection HILUnresolvedReference
-  dynamic "libraries" {
-    for_each = lookup(each.value, "libraries", null) == null ? {} : {libraries: each.value.libraries}
-
-    content {
-      name = lookup(libraries.value, "shell", null)
-      version = lookup(libraries.value, "shell", null)
-    }
-  }
-
   //noinspection HILUnresolvedReference,ConflictingProperties
   dynamic "basic_scaling" {
     # Only one of automatic_scaling, basic_scaling or manual_scaling are allowed so check for the other here
@@ -503,4 +496,7 @@ resource "google_app_engine_standard_app_version" "self" {
   # Terraform in-built properties
   noop_on_destroy = var.tf_noop_on_destroy
   delete_service_on_destroy = var.tf_delete_service_on_destroy
+  lifecycle {
+    create_before_destroy = true
+  }
 }
