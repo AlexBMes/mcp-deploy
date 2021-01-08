@@ -6,10 +6,10 @@ on:
       - master
 
 jobs:
-  unit-tests:
+  deployment-tests:
     name: 'Deployment tests'
     runs-on: ubuntu-latest
-#    if: contains(github.head_ref, 'mcp')
+
     env:
       working-directory: ./tests/mcp/deployment
       GCP_PROJECT_ID: "testingmcpaction-${GITHUB_SHA::8}"
@@ -36,12 +36,15 @@ jobs:
         with:
           terraform_wrapper: false
 
+      # Install gcoud sdk and set the service account
       - name: Setup Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
           service_account_key: ${{secrets.GCP_SA_KEY}}
           export_default_credentials: true
 
+      # Create a project and enable billing and other services
+      # Configure buckets to be used, constrained to europe-west2 to match organization policies.
       - name: Setup GCP
         run: |
           gcloud projects create ${{env.GCP_PROJECT_ID}} --folder=${{secrets.GCP_FOLDER_ID}} --set-as-default
@@ -57,12 +60,14 @@ jobs:
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_bucket
           gsutil mb -l europe-west2 gs://${{env.GCP_PROJECT_ID}}_cloudbuild
 
+      # Deploy app image to Artifact Repository
       - name: Build App
         run: |
           cd GCP/app/build/helloworld
           gcloud artifacts repositories create app-repo --repository-format=docker --location=europe-west2 --description="Repository for storing app"
           gcloud builds submit --tag europe-west2-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/app-repo/helloworld
 
+      # Create a new service account to be used for deployment
       - name: Create New SA
         run: |
           gcloud iam service-accounts create ga-deploy --description="Deploy with github actions" --display-name="Service account deploys through github action"
@@ -71,36 +76,48 @@ jobs:
           gcloud projects add-iam-policy-binding ${{env.GCP_PROJECT_ID}} --member="serviceAccount:ga-deploy@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com" --role="roles/artifactregistry.admin" --no-user-output-enabled
           gcloud auth activate-service-account --key-file=sa-key.json
 
-      - name: Configure Files
+      # Configure yaml files to contain relevant project info
+      - name: Configure GCP Files
         run: |
           cd GCP
           echo "name: ${{env.GCP_PROJECT_ID}}_app_bucket" > project.yml
-          cat project.yml
-          cat gcp_ae.yml | sed -r "s/<project_id>/${{env.GCP_PROJECT_ID}}/" > temp && mv temp gcp_ae.yml
-          cat gcp_ae.yml | sed -r "s/<image_uri>/europe-west2-docker.pkg.dev\/${{env.GCP_PROJECT_ID}}\/app-repo\/helloworld:latest/" > temp && mv temp gcp_ae.yml
-          cat gcp_ae.yml
-          cat gcp_cloudrun.yml | sed -r "s/<project_id>/${{env.GCP_PROJECT_ID}}/" > temp && mv temp gcp_cloudrun.yml
-          cat gcp_cloudrun.yml | sed -r "s/<image_uri>/europe-west2-docker.pkg.dev\/${{env.GCP_PROJECT_ID}}\/app-repo\/helloworld:latest/" > temp && mv temp gcp_cloudrun.yml
-          cat gcp_cloudrun.yml
+          sed -i "s/<project_id>/${{env.GCP_PROJECT_ID}}/" gcp_ae.yml
+          sed -i "s/<project_id>/${{env.GCP_PROJECT_ID}}/" gcp_cloudrun.yml
+          sed -i "s/<image_uri>/europe-west2-docker.pkg.dev\/${{env.GCP_PROJECT_ID}}\/app-repo\/helloworld:latest/" gcp_cloudrun.yml
 
-      - name: Deploy GCP modules
+
+      # Install kubectl and create gke cluster
+      - name: setup kubectl
         run: |
-          cd GCP
-          cd terraform
-          cat main.tf | sed -r "s/gcs-bucket-name/${{env.GCP_PROJECT_ID}}_bucket/" > temp && mv temp main.tf
+          gcloud components install kubectl
+          gcloud container clusters create mcpdeploytest-cluster --num-nodes=1
+          gcloud container clusters get-credentials mcpdeploytest-cluster
+
+      # Setup main.tf, deploy and destroy k8s
+      - name: deploy k8s
+        run: |
+          cd k8s/terraform
+          sed -i "s/gcs-bucket-name/${{env.GCP_PROJECT_ID}}_bucket/" main.tf
+          sed -i "s/source-path/..\/..\/..\/..\/..\/mcp/" main.tf
           cat main.tf
           terraform init
-          terraform refresh
+          terraform plan -out="./plan.tfplan"
+          terraform apply plan.tfplan
+          terraform plan -destroy -out="./destroy.tfplan"
+          terraform apply destroy.tfplan
+
+      # Setup main.tf and deploy gcp modules. Also plan destroy but don't apply due to app engine issues.
+      - name: Deploy GCP modules
+        run: |
+          cd GCP/terraform
+          sed -i "s/gcs-bucket-name/${{env.GCP_PROJECT_ID}}_bucket/" main.tf
+          sed -i "s/source-path/..\/..\/..\/..\/..\/mcp/" main.tf
+          cat main.tf
+          terraform init
           terraform plan -out="./plan.tfplan"
           terraform apply plan.tfplan
           terraform plan -destroy -out="./destroy.tfplan"
 
-
       - name: delete project
+        if : ${{ always() }}
         run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
-
-      - name: error cleanup
-        if: ${{ failure() }}
-        run: gcloud projects delete ${{env.GCP_PROJECT_ID}}
-
-      #TODO: Deploy AWS
