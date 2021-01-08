@@ -64,7 +64,7 @@ jobs:
         run: |
           cd GCP/app/build/helloworld
           gcloud artifacts repositories create app-repo --repository-format=docker --location=europe-west2 --description="Repository for storing app"
-          gcloud builds submit --tag europe-west2-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/app-repo/helloworld --region=europe-west2-c
+          gcloud builds submit --tag europe-west2-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/app-repo/helloworld
 
       # Create a new service account to be used for deployment
       - name: Create New SA
