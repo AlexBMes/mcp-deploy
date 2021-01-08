@@ -12,7 +12,7 @@ jobs:
 
     env:
       working-directory: ./tests/mcp/deployment
-      GCP_PROJECT_ID: "testingmcpaction-${GITHUB_SHA::8}-$(date '+%H%M')"
+      GCP_PROJECT_ID: "testingmcpaction-${GITHUB_SHA::8}-${GITHUB_RUN_ID}"
 
     defaults:
       run:
