@@ -9,6 +9,7 @@ jobs:
   deployment-tests:
     name: 'Deployment tests'
     runs-on: ubuntu-latest
+    if: contains(github.ref, "mcp")
 
     env:
       working-directory: ./tests/mcp/deployment
