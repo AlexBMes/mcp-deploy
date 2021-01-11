@@ -92,7 +92,7 @@ resource "kubernetes_deployment" "self" {
             rbd                     = lookup(volume, "rbd", null)
             secret                  = lookup(volume, "secret", null)
             vsphere_volume          = lookup(volume, "vsphere_volume", null)
-            }
+          }
           if lookup(each.value.deployment.spec.template.spec, "volume", []) != []]
           content {
             name = lookup(volume.value, "name", null)
@@ -635,7 +635,7 @@ resource "kubernetes_deployment" "self" {
             liveness_probe           = lookup(container, "liveness_probe", null)
             readiness_probe          = lookup(container, "readiness_probe", null)
             volume_mount             = lookup(container, "volume_mount", [])
-            }
+          }
           if lookup(each.value.deployment.spec.template.spec, "container", []) != []]
           content {
             image             = lookup(container.value, "image", null)
