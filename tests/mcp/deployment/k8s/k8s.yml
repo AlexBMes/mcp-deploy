@@ -9,39 +9,27 @@ components:
           namespace:
           labels:
             app: "mosquitto"
-        spec:
-          selector:
-            match_labels:
-              app: "mosquitto"
-          template:
-            metadata:
-              labels:
+          spec:
+            selector:
+              match_labels:
                 app: "mosquitto"
-            spec:
-              container:
-                - name: "mosquitto"
-                  image: "eclipse-mosquitto:1.6.2"
-                  port:
-                    - container_port: 1883
-                  resources:
-                    limits:
-                      cpu: "0.5"
-                      memory: "512Mi"
-                    requests:
-                      cpu: "250m"
-                      memory: "50Mi"
-                  volume_mount:
-                    - name: mosquitto-secret-file
-                      mount_path: /mosquitto/secret
-                    - name: mosquitto-config-file
-                      mount_path: mosquitto/config
-              volume:
-                - name: mosquitto-config-file
-                  config_map:
-                    name: mosquitto-config-file
-                - name: mosquitto-secret-file
-                  secret:
-                    secret_name: mosquitto-secret-file
+            template:
+              metadata:
+                labels:
+                  app: "mosquitto"
+              spec:
+                container:
+                  - name: "mosquitto"
+                    image: "eclipse-mosquitto:1.6.2"
+                    port:
+                      - container_port: 1883
+                    resources:
+                      limits:
+                        cpu: "0.5"
+                        memory: "512Mi"
+                      requests:
+                        cpu: "250m"
+                        memory: "50Mi"
 
 
       config_map:
