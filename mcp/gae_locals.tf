@@ -10,29 +10,29 @@ locals {
       path = "/"
     }
   }
-  user_gae_config_yml     = fileexists(var.gcp_ae_yml)? file(var.gcp_ae_yml) : null
-  gae                     = try(yamldecode(local.user_gae_config_yml), {})
-  gae_components          = lookup(local.gae, "components", {})
-  gae_components_specs    = lookup(local.gae_components, "specs", {})
+  user_gae_config_yml  = fileexists(var.gcp_ae_yml) ? file(var.gcp_ae_yml) : null
+  gae                  = try(yamldecode(local.user_gae_config_yml), {})
+  gae_components       = lookup(local.gae, "components", {})
+  gae_components_specs = lookup(local.gae_components, "specs", {})
 
   //noinspection HILUnresolvedReference
   as_all_map = {
-    for as, config in local.gae_components_specs:
-      #This doesn't merge complex maps. Any nested map requirements need to handled at the property
-      # level. See env_variables below
+    for as, config in local.gae_components_specs :
+    #This doesn't merge complex maps. Any nested map requirements need to handled at the property
+    # level. See env_variables below
       as => merge(lookup(local.gae_components, "common", {}), config)
   }
   //noinspection HILUnresolvedReference
   as_flex_specs = {
-    for as, config in local.gae_components_specs:
-      #This doesn't merge complex maps. Any nested map requirements need to handled at the property
-      # level. See env_variables below
+    for as, config in local.gae_components_specs :
+    #This doesn't merge complex maps. Any nested map requirements need to handled at the property
+    # level. See env_variables below
       as => merge(lookup(local.gae_components, "common", {}), config)
       if lookup(merge(lookup(local.gae_components, "common", {}), config), "env", "standard") == "flex"
   }
   //noinspection HILUnresolvedReference
   as_std_specs = {
-    for as, config in local.gae_components_specs:
+    for as, config in local.gae_components_specs :
       as => merge(lookup(local.gae_components, "common", {}), config)
       if lookup(merge(lookup(local.gae_components, "common", {}), config), "env", "standard") == "standard"
   }
@@ -51,32 +51,19 @@ locals {
         manifest: format("../%s/%s/mmcf-manifest.json", lookup(spec, "root_dir", as), lookup(spec, "build_dir", "build"))
       }
   }
+
   manifests = {
-    for as, path in local.as_paths:
-      as => jsondecode(file(path.manifest))
-      if fileexists(path.manifest)
+    for as, path in local.as_paths : as =>
+      jsondecode(file(path.manifest))
+        if fileexists(path.manifest)
   }
 
-  //noinspection HILUnresolvedReference
-  file_sha1sums = {
-    for as, manifest in local.manifests:
-      as => {
-        for src_file in manifest.contents:
-          src_file => filesha1(format("%s/%s/%s", lookup(local.as_paths, as).build_dir, manifest.artifactDir, src_file))
-      }
+  src_files = {
+    for as, manifest in local.manifests : as => {
+      for path in manifest.contents : basename(path) =>
+        "https://storage.googleapis.com/${lookup(local.gae, "bucket_name", local.gae.project_id)}/${local.as_paths[as].build_dir}/${manifest.artifactDir}/${path}"
+    }
   }
 
-
-  //noinspection HILUnresolvedReference
-  src_files = local.manifests == [] ? [] : flatten([
-    for as, manifest in local.manifests:
-      formatlist("%s/%s/%s", lookup(local.as_paths, as).build_dir, manifest.artifactDir, manifest.contents)
-  ])
-
-  //noinspection HILUnresolvedReference
-  upload_manifest = local.src_files == [] ? {} : {
-    for src_file in local.src_files:
-      src_file => filesha1(src_file)
-  }
 }
 
