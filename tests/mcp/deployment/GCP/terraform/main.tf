@@ -6,5 +6,5 @@ terraform{
 }
 
 module "mcp" {
-  source = "../../../../../mcp"
+  source = "source-path"
 }
