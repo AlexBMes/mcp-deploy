@@ -154,7 +154,7 @@ data "google_iam_policy" "auth" {
 resource "google_cloud_run_service_iam_policy" "self" {
   for_each = {
     for key, specs in local.cloudrun_specs : key => specs
-    if lookup(local.cloudrun_iam[key], "replace_policy", true)
+    if !specs.auth || lookup(local.cloudrun_iam[key], "replace_policy", false)
   }
   location = google_cloud_run_service.self[each.key].location
   project  = google_cloud_run_service.self[each.key].project

@@ -87,25 +87,25 @@ jobs:
           sed -i "s/<image_uri>/europe-west2-docker.pkg.dev\/${{env.GCP_PROJECT_ID}}\/app-repo\/helloworld:latest/" gcp_cloudrun.yml
 
 
-      # Install kubectl and create gke cluster
-      - name: setup kubectl
-        run: |
-          gcloud components install kubectl
-          gcloud container clusters create mcpdeploytest-cluster --num-nodes=1 --zone=europe-west2-a --node-locations=europe-west2-a,europe-west2-c
-          gcloud container clusters get-credentials mcpdeploytest-cluster --zone=europe-west2-a
-
-      # Setup main.tf, deploy and destroy k8s
-      - name: deploy k8s
-        run: |
-          cd k8s/terraform
-          sed -i "s/gcs-bucket-name/${{env.GCP_PROJECT_ID}}_bucket/" main.tf
-          sed -i "s/source-path/..\/..\/..\/..\/..\/mcp/" main.tf
-          cat main.tf
-          terraform init
-          terraform plan -out="./plan.tfplan"
-          terraform apply plan.tfplan
-          terraform plan -destroy -out="./destroy.tfplan"
-          terraform apply destroy.tfplan
+#      # Install kubectl and create gke cluster
+#      - name: setup kubectl
+#        run: |
+#          gcloud components install kubectl
+#          gcloud container clusters create mcpdeploytest-cluster --num-nodes=1 --zone=europe-west2-a --node-locations=europe-west2-a,europe-west2-c
+#          gcloud container clusters get-credentials mcpdeploytest-cluster --zone=europe-west2-a
+#
+#      # Setup main.tf, deploy and destroy k8s
+#      - name: deploy k8s
+#        run: |
+#          cd k8s/terraform
+#          sed -i "s/gcs-bucket-name/${{env.GCP_PROJECT_ID}}_bucket/" main.tf
+#          sed -i "s/source-path/..\/..\/..\/..\/..\/mcp/" main.tf
+#          cat main.tf
+#          terraform init
+#          terraform plan -out="./plan.tfplan"
+#          terraform apply plan.tfplan
+#          terraform plan -destroy -out="./destroy.tfplan"
+#          terraform apply destroy.tfplan
 
       # Setup main.tf and deploy gcp modules. Also plan destroy but don't apply due to app engine issues.
       - name: Deploy GCP modules
