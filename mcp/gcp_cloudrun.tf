@@ -167,7 +167,7 @@ resource "google_cloud_run_service_iam_policy" "self" {
 resource "google_cloud_run_service_iam_binding" "self" {
   for_each = {
     for key, bindings in local.cloudrun_iam_bindings : key => bindings
-      if local.cloudrun_specs[key].auth && ! lookup(local.cloudrun_iam[key], "replace_policy", true)
+      if local.cloudrun_specs[key].auth && ! lookup(local.cloudrun_iam[key], "replace_policy", false)
   }
   project  = google_cloud_run_service.self[each.key].project
   location = google_cloud_run_service.self[each.key].location
