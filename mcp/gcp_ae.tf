@@ -248,7 +248,7 @@ resource "google_app_engine_flexible_app_version" "self" {
     for_each = lookup(each.value, "manual_scaling", null) == null ? {} : {manual_scaling: each.value.manual_scaling}
 
     content {
-      instances = lookup(manual_scaling.value, "instances", null)
+      instances = lookup(manual_scaling.value, "instances", 1)
     }
   }
 
