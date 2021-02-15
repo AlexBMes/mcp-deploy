@@ -52,7 +52,7 @@ resource "google_project_service" "std" {
 //noinspection HILUnresolvedReference
 resource "google_app_engine_application" "self" {
   count = local.gae == {} ? 0 : 1
-  project = length(local.as_flex_specs) > 0 ? google_project_iam_member.gae_api.0.project : google_project_service.std.0.project
+  project = length(local.as_flex_specs) > 0 ? google_project_service.self.0.project : google_project_service.std.0.project
   location_id = lookup(local.gae, "location_id", null)
   auth_domain = lookup(local.gae, "auth_domain", null)
   serving_status = lookup(local.gae, "serving_status", null)
@@ -80,6 +80,23 @@ resource "google_app_engine_application" "self" {
   }
 }
 
+//
+//resource "null_resource" "delay" {
+//  count = length(local.as_flex_specs) > 0 ? 1: 0
+//  provisioner "local-exec" {
+//    command = "sleep 10"
+//  }
+//  triggers =  {
+//    "gae_api" = google_project_iam_member.gae_api.0
+//  }
+//}
+//
+//resource "time_sleep" "flex_10_delay" {
+//  create_duration = "10s"
+//  triggers ={
+//
+//  }
+//}
 
 resource "google_project_iam_member" "gae_api" {
   count = length(local.as_flex_specs) > 0 ? 1 : 0
@@ -95,8 +112,8 @@ resource "google_project_iam_member" "gae_api" {
 resource "google_app_engine_flexible_app_version" "self" {
   for_each = local.as_flex_specs
   # force dependency on the required service account being created and given permission to operate
-
-  project = google_app_engine_application.self.0.project
+  depends_on = [google_project_iam_member.gae_api.0]
+  project = google_project_iam_member.gae_api.0.project
   version_id = lookup(each.value, "version_id", lookup(local.project, "version", "v1"))
   service = lookup(each.value, "service", each.key)
   runtime = lookup(each.value, "runtime", null)
