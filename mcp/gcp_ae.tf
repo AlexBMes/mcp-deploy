@@ -52,7 +52,7 @@ resource "google_project_service" "std" {
 //noinspection HILUnresolvedReference
 resource "google_app_engine_application" "self" {
   count = local.gae == {} ? 0 : 1
-  project = length(local.as_flex_specs) > 0 ? google_project_service.flex.0.project : google_project_service.std.0.project
+  project = length(local.as_flex_specs) > 0 ? google_project_iam_member.gae_api.0.project : google_project_service.std.0.project
   location_id = lookup(local.gae, "location_id", null)
   auth_domain = lookup(local.gae, "auth_domain", null)
   serving_status = lookup(local.gae, "serving_status", null)
@@ -96,7 +96,7 @@ resource "google_app_engine_flexible_app_version" "self" {
   for_each = local.as_flex_specs
   # force dependency on the required service account being created and given permission to operate
 
-  project = google_project_iam_member.gae_api.0.project
+  project = google_app_engine_flexible_app_version.self.0.project
   version_id = lookup(each.value, "version_id", lookup(local.project, "version", "v1"))
   service = lookup(each.value, "service", each.key)
   runtime = lookup(each.value, "runtime", null)
@@ -108,7 +108,7 @@ resource "google_app_engine_flexible_app_version" "self" {
   runtime_channel = lookup(each.value, "runtime_channel", null)
   runtime_main_executable_path = lookup(each.value, "runtime_main_executable_path", null)
   serving_status = lookup(each.value, "serving_status", null)
-  env_variables = lookup(each.value, "env_variables", null )
+  env_variables = local.env_variables[each.key]
 
   //noinspection HILUnresolvedReference
   dynamic "deployment" {
@@ -343,7 +343,7 @@ resource "google_app_engine_standard_app_version" "self" {
   instance_class = lookup(each.value, "instance_class", null)
   runtime_api_version = lookup(each.value, "runtime_api_version", null)
   threadsafe = lookup(each.value, "threadsafe", null)
-  env_variables = lookup(each.value, "env_variables", null)
+  env_variables = local.env_variables[each.key]
 
   //noinspection HILUnresolvedReference
   dynamic "deployment" {

@@ -1,9 +1,10 @@
-provider "google" {}
+
 //noinspection HILUnresolvedReference
 data "google_project" "default" {
   count      = local.cloudrun == {} || lookup(local.cloudrun, "create_google_project", false) ? 0 : 1
   project_id = lookup(local.cloudrun, "project_id", "")
 }
+
 
 resource "google_project_service" "iam" {
   count              = local.cloudrun == {} ? 0 : 1
@@ -54,9 +55,9 @@ resource "google_cloud_run_service" "self" {
   name     = each.value.name
   project  = google_project_service.cloudrun[0].project
   dynamic metadata {
-    for_each = { metadata = lookup(each.value, "metadata", {}) }
-    content {
-      annotations      = merge(local.cloudrun_default.metadata.annotations, lookup(metadata.value, "annotations", {}))
+    for_each = {metadata = lookup(each.value,"metadata",{})}
+    content{
+      annotations      = merge(local.cloudrun_default.metadata.annotations, lookup(metadata.value, "annotations", {} ))
       generation       = lookup(metadata.value, "generation", null)
       labels           = lookup(metadata.value, "labels", null)
       namespace        = lookup(metadata.value, "namespace", null)
@@ -105,7 +106,7 @@ resource "google_cloud_run_service" "self" {
     }
     //noinspection HILUnresolvedReference
     dynamic metadata {
-      for_each = { metadata : lookup(each.value.template, "metadata", {}) }
+      for_each = {metadata: lookup(each.value.template, "metadata",{})}
       content {
         name             = lookup(metadata.value, "name", null)
         annotations      = merge(local.cloudrun_default.template_metadata.annotations, lookup(metadata.value, "annotations", {}))
@@ -119,12 +120,12 @@ resource "google_cloud_run_service" "self" {
     }
   }
   dynamic "traffic" {
-    for_each = local.cloudrun_traffic[each.key]
+    for_each = local.cloudrun_traffic[each.key] == [] ? local.cloudrun_default.traffic : local.cloudrun_traffic[each.key]
     //noinspection HILUnresolvedReference
     content {
-      percent         = lookup(traffic.value, "percent", null)
+      percent         = traffic.value.percent
       revision_name   = lookup(traffic.value, "revision_name", null)
-      latest_revision = lookup(traffic.value, "latest_revision", null)
+      latest_revision = lookup(traffic.value, "revision_name", null) == null ? true : false
     }
   }
 
@@ -154,7 +155,7 @@ data "google_iam_policy" "auth" {
 resource "google_cloud_run_service_iam_policy" "self" {
   for_each = {
     for key, specs in local.cloudrun_specs : key => specs
-    if !specs.auth || lookup(local.cloudrun_iam[key], "replace_policy", false)
+      if !specs.auth || (specs.auth && (lookup(local.cloudrun_iam[key], "replace_policy", false)))
   }
   location = google_cloud_run_service.self[each.key].location
   project  = google_cloud_run_service.self[each.key].project
@@ -167,7 +168,7 @@ resource "google_cloud_run_service_iam_policy" "self" {
 resource "google_cloud_run_service_iam_binding" "self" {
   for_each = {
     for key, bindings in local.cloudrun_iam_bindings : key => bindings
-      if local.cloudrun_specs[key].auth && ! lookup(local.cloudrun_iam[key], "replace_policy", false)
+    if !lookup(local.cloudrun_iam[key], "replace_policy", false) && length(bindings) != 0
   }
   project  = google_cloud_run_service.self[each.key].project
   location = google_cloud_run_service.self[each.key].location
@@ -193,7 +194,7 @@ resource "google_cloud_run_service_iam_member" "self" {
 resource "google_cloud_run_domain_mapping" "self" {
   for_each = {
     for key, specs in local.cloudrun_specs : key => specs
-    if lookup(local.cloudrun_specs[key], "domain", null) != null
+      if lookup(local.cloudrun_specs[key], "domain", null) != null
   }
   location = google_cloud_run_service.self[each.key].location
   name     = lookup(local.cloudrun_specs[each.key], "domain", "")
