@@ -9,7 +9,7 @@ components:
   specs:
     default:
       automatic_scaling: {
-        max_idle_instance: 7
+        max_idle_instance: 2
       }
       deployment:
         container:
