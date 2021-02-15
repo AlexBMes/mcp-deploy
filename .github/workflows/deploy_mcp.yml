@@ -13,7 +13,8 @@ jobs:
 
     env:
       working-directory: ./tests/mcp/deployment
-      GCP_PROJECT_ID: "testmcpaction-${GITHUB_SHA::8}-${GITHUB_RUN_NUMBER}"
+      GCP_PROJECT_ID: "testmcpaction-${GITHUB_SHA::8}"
+  )"
 #      KUBE_CONFIG_PATH: ~/.kube/config
 
     defaults:
