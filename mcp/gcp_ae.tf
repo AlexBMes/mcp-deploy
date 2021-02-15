@@ -110,6 +110,7 @@ resource "google_project_iam_member" "gae_api" {
 
 //noinspection HILUnresolvedReference
 resource "google_app_engine_flexible_app_version" "self" {
+  provider = google-beta
   for_each = local.as_flex_specs
   # force dependency on the required service account being created and given permission to operate
 
