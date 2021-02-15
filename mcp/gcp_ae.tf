@@ -96,7 +96,7 @@ resource "google_app_engine_flexible_app_version" "self" {
   for_each = local.as_flex_specs
   # force dependency on the required service account being created and given permission to operate
 
-  project = google_app_engine_flexible_app_version.self.0.project
+  project = google_app_engine_application.self.0.project
   version_id = lookup(each.value, "version_id", lookup(local.project, "version", "v1"))
   service = lookup(each.value, "service", each.key)
   runtime = lookup(each.value, "runtime", null)
@@ -179,6 +179,7 @@ resource "google_app_engine_flexible_app_version" "self" {
       min_idle_instances = lookup(automatic_scaling.value, "min_idle_instances", null)
       min_pending_latency = lookup(automatic_scaling.value, "min_pending_latency", null)
       min_total_instances = lookup(automatic_scaling.value, "min_total_instances", null)
+      //noinspection HILUnresolvedReference
       dynamic "cpu_utilization"{
         for_each = lookup(automatic_scaling.value, "cpu_utilization", null) == null ? {cpu_utilization: {target_utilization: local.default.automatic_scaling.target_utilization}} : {cpu_utilization: automatic_scaling.value.cpu_utilization}
         //noinspection HILUnresolvedReference
