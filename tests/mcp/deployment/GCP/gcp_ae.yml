@@ -8,7 +8,9 @@ components:
     env: flex
   specs:
     default:
-      automatic_scaling: {}
+      automatic_scaling: {
+        max_idle_instance: 7
+      }
       deployment:
         container:
           image: <image_uri>
