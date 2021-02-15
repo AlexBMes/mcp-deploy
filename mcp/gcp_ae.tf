@@ -16,7 +16,6 @@ data "google_organization" "self" {
 
 
 
-
 //noinspection HILUnresolvedReference
 resource "google_project" "self" {
   count = lookup(local.gae, "create_google_project", false) ? 1 : 0
@@ -90,13 +89,14 @@ resource "google_app_engine_application" "self" {
 //    "gae_api" = google_project_iam_member.gae_api.0
 //  }
 //}
-//
-//resource "time_sleep" "flex_10_delay" {
-//  create_duration = "10s"
-//  triggers ={
-//
-//  }
-//}
+
+resource "time_sleep" "flex_sa_propgation" {
+  count = length(local.as_flex_specs) > 0 ? 1: 0
+  create_duration = "60s"
+  triggers ={
+    project_id = google_project_iam_member.gae_api.0.project
+  }
+}
 
 resource "google_project_iam_member" "gae_api" {
   count = length(local.as_flex_specs) > 0 ? 1 : 0
@@ -114,7 +114,7 @@ resource "google_app_engine_flexible_app_version" "self" {
   for_each = local.as_flex_specs
   # force dependency on the required service account being created and given permission to operate
 
-  project = google_app_engine_application.self.0.project
+  project = time_sleep.flex_sa_propgation.0.triggers["project_id"]
   version_id = lookup(each.value, "version_id", lookup(local.project, "version", "v1"))
   service = lookup(each.value, "service", each.key)
   runtime = lookup(each.value, "runtime", null)
