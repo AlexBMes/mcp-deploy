@@ -90,9 +90,9 @@ resource "google_app_engine_application" "self" {
 //  }
 //}
 
-resource "time_sleep" "flex_sa_propgation" {
+resource "time_sleep" "flex_sa_propagation" {
   count = length(local.as_flex_specs) > 0 ? 1: 0
-  create_duration = "2m"
+  create_duration = lookup(local.gae, "delay", "2m")
   triggers ={
     project_id = google_project_iam_member.gae_api.0.project
   }
@@ -114,7 +114,7 @@ resource "google_app_engine_flexible_app_version" "self" {
   for_each = local.as_flex_specs
   # force dependency on the required service account being created and given permission to operate
 
-  project = time_sleep.flex_sa_propgation.0.triggers["project_id"]
+  project = time_sleep.flex_sa_propagation.0.triggers["project_id"]
   version_id = lookup(each.value, "version_id", lookup(local.project, "version", "v1"))
   service = lookup(each.value, "service", each.key)
   runtime = lookup(each.value, "runtime", null)

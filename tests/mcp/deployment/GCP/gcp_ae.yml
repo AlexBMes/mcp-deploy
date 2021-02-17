@@ -1,6 +1,7 @@
 project_id: &project_id <project_id>
 create_google_project: false
 location_id: "europe-west2"
+delay: "90s"
 components:
   common:
     entrypoint: python main.py
