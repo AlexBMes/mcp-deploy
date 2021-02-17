@@ -10,7 +10,6 @@ components:
           labels:
             app: "mosquitto"
         spec:
-          replicas: 1
           selector:
             match_labels:
               app: "mosquitto"
