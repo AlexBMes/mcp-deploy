@@ -92,7 +92,7 @@ resource "google_app_engine_application" "self" {
 
 resource "time_sleep" "flex_sa_propgation" {
   count = length(local.as_flex_specs) > 0 ? 1: 0
-  create_duration = "4m"
+  create_duration = "3m"
   triggers ={
     project_id = google_project_iam_member.gae_api.0.project
   }
