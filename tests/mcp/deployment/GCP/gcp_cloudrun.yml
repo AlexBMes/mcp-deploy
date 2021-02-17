@@ -1,0 +1,10 @@
+project_id: <project_id>
+location_id: "europe-west2"
+components:
+  specs:
+    default:
+      name: "default"
+      template:
+        containers:
+          image: <image_uri>
+      auth: false
